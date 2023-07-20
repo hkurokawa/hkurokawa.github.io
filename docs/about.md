@@ -4,15 +4,10 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+This is the website of Hiroshi Kurokawa (@hydrakecat).
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
-
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
-
-
-[jekyll-organization]: https://github.com/jekyll
+- GitHub: [github.com/hkurokawa](https://github.com/hkurokawa)
+- AtCoder: [atcoder.jp/users/hkurokawa](https://atcoder.jp/users/hkurokawa)
+- Mastodon: [mastodon.cloud/@hydrakecat](https://mastodon.cloud/@hydrakecat)
+- Bluesky: [bsky.app/profile/hydrakecat.net](https://bsky.app/profile/hydrakecat.net)
+- Twitter: [twitter.com/hydrakecat](https://twitter.com/hydrakecat)
