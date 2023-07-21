@@ -6,8 +6,6 @@ permalink: /about/
 
 Hiroshi Kurokawa (黒川 洋)
 
-Programmer.
-
 - GitHub: [github.com/hkurokawa](https://github.com/hkurokawa)
 - AtCoder: [atcoder.jp/users/hkurokawa](https://atcoder.jp/users/hkurokawa)
 - Mastodon: [mastodon.cloud/@hydrakecat](https://mastodon.cloud/@hydrakecat)
