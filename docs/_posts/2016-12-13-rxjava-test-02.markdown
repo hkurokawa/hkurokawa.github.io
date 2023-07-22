@@ -1,0 +1,128 @@
+---
+layout: post
+title:  "RxJava のテスト(2): RxJavaHooks, RxAndroidPlugins"
+date:   2016-12-13 06:45:32.000000000 -0800
+categories: 
+---
+これは[RxJava Advent Calendar 2016](http://qiita.com/advent-calendar/2016/rxjava)の第14日目の記事です。[前回](http://hydrakecat.hatenablog.jp/entry/2016/12/12/RxJava_%E3%81%AE%E3%83%86%E3%82%B9%E3%83%88%281%29%3A_TestSubscriber%2C_test%28%29%2C_TestScheduler)はTestSubscriberやTestSchedulerを使ってRxJavaに関わる単体テストのしかたを説明しました。
+
+この記事では、それらでは足りない場合の奥の手、スケジューラを差し替える方法について説明します。
+
+[f:id:hydrakecat:20161211234713p:plain]
+
+<!--more-->
+
+# TestSubscriberやTestSchedulerでは解決しない場合
+
+以下のコードを見てください。これは前回の記事で使用した `AsyncService` をラップした `WrappedService` のテストです。このラップが適切かどうかは、措いておきましょう。きっと誰かが、より使いやすくなると思って作ったのでしょう :-)
+
+```java
+  @Test public void testWrappedService() {
+    final WrappedService service = new WrappedService(new AsyncService());
+
+    service.start();
+    assertEquals("success", service.result);
+  }
+
+  private static class WrappedService {
+    private final AsyncService service;
+    private String result;
+
+    public WrappedService(AsyncService service) {
+      this.service = service;
+    }
+
+    public Subscription start() {
+      return service.doSomething().subscribeOn(Schedulers.computation()).subscribe(s -> result = s);
+    }
+  }
+```
+
+このテストは予想通り失敗します。なぜならタイミングをいっさいコントロールしていないからです。そして、前回見たようなTestSubscriberやTestSchedulerを使ってタイミングをコントロールしたくても、そもそもObservableを返さないので指定しようがありません。この例のように、内部でsubscribeを呼んでいる場合は、スケジューラの指定方法がないので、お手上げになってしまいます。
+
+このような、テスト側からスケジューラをコントロールできない場合の奥の手があります。それはRxJava全体のスケジューラを書き換えてしまう方法です。
+
+# RxJava のスケジュールの差し替え
+
+ここからは、1.x 系と 2.x 系でやり方が少しだけ変わります。まずは 1.x の差し替え方法を見てみましょう。
+
+## RxJava 1.x 系でのスケジューラの差し替え
+
+RxJava にはデフォルトの挙動を切り替えるためのプラグイン機構があるので、それを使います。古い記事を見ていると `RxJavaPlugins` クラスを使っているのですが、RxJava 1.1.6 からは [RxJavaHooks](http://reactivex.io/RxJava/javadoc/rx/plugins/RxJavaHooks.html) というクラスのメソッドに集約されたので、そちらを使いましょう。
+
+以下のコードを実行すれば、 `Schedulers.computation()` のスケジューラを差し替えることができます。ここでフックを設定すると `Schedulers.computation()` が呼ばれるたびに指定した関数が呼び出され、引数としてデフォルトのスケジューラが渡されます。
+
+なお、ここでは `Schedulers.immediate()` を返していますが、前回説明したTestSchedulerを渡せば、好きにスケジューラを操ることができます。
+
+```java
+  @Before
+  public void setup() {
+    RxJavaHooks.setOnComputationScheduler(s -> Schedulers.immediate());
+  }
+
+  @After
+  public void teardown() {
+    RxJavaHooks.reset();
+  }
+```
+
+期待通りに動いたでしょうか？これに加えて `Schedulers.io()` や `Schedulers.newThread()` で返されるスケジューラを差し替えるための `RxJavaHooks#setOnIOScheduler()` と `RxJavaHooks#setOnNewThreadScheduler()` も用意されています。
+
+1.1.6までは、RxJavaPluginsの制約から、RxJavaPluginsと同名のパッケージを切ったり、自作のTestRunnerを書かなければならなかったのですが、RxJavaHooksが導入されてからは、そのような面倒な作業は必要なくなりました。
+
+1つだけ注意点があります。この差し替えはグローバルに効いてしまうため、他のテストに影響を与える可能性があります。特に `RxJavaPlugins` も併用している場合は注意しましょう。RxJavaHooksはデフォルトで何もフックがなければRxJavaPluginsへ委譲します。そしてフックを設定した後でも `RxJavaHooks#reset()` メソッドを呼べば設定されたフックを破棄してRxJavaPluginsへの委譲が復活します。なお、 `RxJavaHooks#clear()` を呼んでしまうと、RxJavaPluginsも含めてすべてのフックがクリアされてしまいます。
+
+## RxJava 2.x 系でのスケジューラの差し替え
+
+RxJava 2.x 系の方にも同じプラグイン機構があります。ただし、こちらの名前は[RxJavaPlugins](http://reactivex.io/RxJava/2.x/javadoc/io/reactivex/plugins/RxJavaPlugins.html)です。1.x の古い方のプラグイン用クラスと同名です。紛らわしいですね。上記のRxJavaHooksの名前だけを変えたと思えば良いでしょう。使い方も同様です。
+
+```java
+  @Before public void setup() {
+    RxJavaPlugins.setComputationSchedulerHandler(s -> Schedulers.trampoline());
+  }
+
+  @After public void teardown() {
+    RxJavaPlugins.reset();
+  }
+```
+
+ここで、RxJava 1.x で使った `Schedulers.immediate()` を使っていないことに注意しましょう。そうです、RxJava 2.x では `Schedulers.immediate()` がなくなってしまったのです。その代わりに、上に書いたような `trampoline()` というスケジューラを使っても良いですし、TestSchedulerを使っても良いでしょう。それ以外の使い方はRxJavaHooksとほぼ同じです。
+
+# AndroidSchedulers のスケジューラの差し替え
+ここで、すこしRxJava本体からは離れるのですが[RxAndroid](https://github.com/ReactiveX/RxAndroid)というライブラリに触れます。というのも、Androidのテストを書いているときに、非常にしばしば、このライブラリの `AndroidSchedulers#mainThread()` が返すスケジューラを差し替えたくなるからです。
+
+もし、Androidのテストを書いていて、テスト対象のメソッドが内部で `AndroidShedulers.mainThread()` を呼んでいた場合、次のようなエラーが出るはずです。
+
+```java
+java.lang.RuntimeException: Method getMainLooper in android.os.Looper not mocked. See http://g.co/androidstudio/not-mocked for details.
+```
+
+これは `getMainLooper()` がモックされていないというエラーです。ここでRobolectricを使ってAndroidのLooperをモックしても良いのですが、もっと簡単な方法があります。
+
+RxJavaHooksと同じようなプラグイン[RxAndroidPlugins](https://static.javadoc.io/io.reactivex/rxandroid/1.2.1/rx/android/plugins/RxAndroidPlugins.html)というものが用意されているのです。
+
+使い方を見てみましょう。
+
+```java
+  @Before public void setup() {
+    RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook() {
+      @Override
+      public Scheduler getMainThreadScheduler() {
+        return Schedulers.immediate();
+      }
+    });
+  }
+
+  @After public void teardown() {
+    RxAndroidPlugins.getInstance().reset();
+  }
+```
+
+`RxAndroidSchedulerHook#getMainThreadScheduler()` は `AndroidSchedulers.mainThread()` が呼ばれたタイミングで呼ばれます。そこで差し込みたいスケジューラを返しましょう。
+
+なお、すでにフックがセットされている状態で、この `registerSchedulerHook()` メソッドを呼ぶとエラーになります。必ずセットする前に `reset()` を呼ぶか、この `registerSchedulerHook()` メソッドが1度しか呼ばれないようにしましょう。
+
+# まとめ
+[前回](http://hydrakecat.hatenablog.jp/entry/2016/12/12/RxJava_%E3%81%AE%E3%83%86%E3%82%B9%E3%83%88%281%29%3A_TestSubscriber%2C_test%28%29%2C_TestScheduler)と今回で、RxJavaを使ったコードをどうテストするか見てきました。
+
+実は、この一連の記事を書いたきっかけは、[DevFest Tokyo](https://gdg-tokyo.connpass.com/event/38927/)で自分が「初心者のためのRxJava」というセッションを行った際に受けた「RxJavaのテストはどうしたら良いですか？」という質問でした。そのときはここに書いてあるようなことを口頭で答えたのですが、どこかにまとめておけば、そのリンクを示すだけで済んだのに、と思い、ここに書いた次第です。同じような悩みを抱えている人の助けになれば幸いです。

@@ -1,0 +1,47 @@
+---
+layout: post
+title:  "Fragmented Ep. 20: Kotlin Taliking with Hadi Hariri"
+date:   2015-11-01 01:26:20.000000000 -0800
+categories: 
+---
+4 月にこのブログを始めて、はや半年。予想通り、三日坊主になってしまった。
+
+これではいけない、というので、ものは試しに今回から [Fragmented](http://fragmentedpodcast.com) というポッドキャストの各エピソードの感想を書いていこうと思う。そうすれば、定期的にポストできるし、Fragmented も真面目に消化するだろう、という下心もある。
+
+# Fragmented とは
+[Fragmented](http://fragmentedpodcast.com) は [Kaushik Gopal](https://twitter.com/kaushikgopal/) と [Donn Felker](https://twitter.com/donnfelker) という2人の Android エンジニアがホストをつとめているポッドキャストで、たいていは Android エンジニアをゲストに招いて、ときどきのテーマで話すという形式だ。2人だけ、もしくは Kaushik だけの回もあるのだけれど、やはり、ゲストがいる回がおもしろい。Kaushik はよくしゃべるし、自分の興味あることを空気読まずに聞いていくスタイル。Donn は、全体の流れを見ながら、ときたま口をはさむことで、話全体をコントロールしたり、冗談を言って場を和ませる役。おとなな印象だ。この2人、凸凹コンビといった風情だが、ゲストに質問するときは、このバランスがちょうどよい。それに、英語も聴きとりやすいし、通勤時間に聴くのにうってつけだと思う。この記事を読んで、興味を持った人はぜひ聴いてみてほしい。
+
+# Ep. 20 Talking Kotlin with Hadi Hariri
+最新話の Ep. 20 のタイトルは、[Talking Kotlin with Hadi Hariri](http://fragmentedpodcast.com/episodes/20/)。JetBrain の中の人、Haddy Hariri を招いて、話題の Kotlin について話している。
+
+結論から言うと、そんなに新しい内容はなかった。ハイライトは、「Google は公式に Kotlin を採用するつもりなのか？」という質問だけれど、答えは「残念ながら、そんな話は一切聞いていない。」とのことで、特に情報はなし。ただ、Google の人達は Kotlin を使っていて Slack で頻繁に質問しているらしい。あと、Kotlin 1.0 のリリース日について、しきりに質問されていたが、数ヶ月以内とのこと。
+
+他の内容をざっと箇条書きにすると、こんな感じ。
+1. Haddy が JetBrains に入るまでのキャリア
+2. IntelliJ IDEA と PyCharm、RubyMine、他のエディタとの関係
+3. Kotlin の開発経緯、目的
+4. Kotlin の特徴
+5. Android アプリ開発における Kotlin（Anko とか Kapt の話とか）
+
+Android アプリ開発という観点からすると、やはり 5. の話が聞きたいのだけれど、Haddy が Android エンジニアではないし、割合が少ないのは仕方ない。Android 以外の話題で気になったものとしては、Kotlin の思想や生まれた経緯だろうか。Kotlin が生まれたのは6年前。JetBrains には Java の資産がたくさんあり、それを利用しつつ Java のくびきから逃れる代替言語を探していたのが発端らしい。Scala はパフォーマンスが理由で脱落し、自分たちで新しい言語を開発することにした由。Kotlin の思想として、何度も繰り返されていたのは、既存のシステムとの "interoperability" という言葉で、あくまで Java から大きく離れるつもりはないとのこと。Java エンジニアの学習コストも高くしたくないし、可読性も損ないたくないと言っていた。実際、Kotlin は静的型付けだし、背後の Java が透けて見える印象を受ける。これは自分のようなやや保守的な人間には安心材料。なお、JetBrains の社内ツールや e-commerce サイトではすでに使われているらしい。
+
+自分の知らなかった Kotlin の機能としては、末尾再帰最適化やインライン化をアノテーションで指示できる、というもの。自動でやっても良いのでは、と思わないではないが、[Blog 記事](http://blog.jetbrains.com/kotlin/2013/12/m6-2-available/)を読むと、デバッグと安全性のために、明示的に指定させているらしい。実際、Go 言語が末尾再帰最適化を入れていないのもデバッグ容易性が1つの理由に挙げられていたし、自覚的に使う方が良いのかもしれない。とはいえ、いちいちアノテーションするくらいなら、自分でループ形式にしてしまえば、と思わなくもない。
+
+Kotlin を使うメリットはなんだろう、という話も出て、この手のオープンソースの独自言語の一般論としておもしろかった。Haddy が指摘していたのは、JetBrains がサポートしているのはメリットの1つだし、JVM 言語は民主的（.Net と違って!）というのも確かにその通りだろう。あと、IntelliJ や Android Studio がサポートしているのもメリットの1つだ。特に、マイグレーションについてはきちんとサポートするとのこと。バージョン間で Deprecated になった機能については、Alt + Enter で自動的に最新の形式に変換してくれるらしい。便利。同時に、独自言語のリスクについても触れられていて、[Wasabi](http://blog.fogcreek.com/killing-off-wasabi-part-1/)について触れられていたのは興味深い。
+
+# Kotlin を Android で使いたいか
+Ep. 20 はそんな感じだったが、では、自分は Kotlin を Android アプリ開発で使いたいか、ということになると、まだためらいがある。ラムダや function extension などの機能は魅力的だけれど、プロダクションで投入する場合は、後から参加するエンジニアの学習コストも考えないといけない。iOS のように公式に言語を移行するなら躊躇はないが、そうでないなら、Java 8 を待つのと天秤にかけてしまう。Java 8 が来るなら、Kotlin のメリットの多くはなくなるのではないだろうか。しばらくは、様子見かなぁ。
+
+# Jake の Droidcon UK での発表
+と、ここまで書いたところで、Jake Wharton の Droidcon UK での発表 [Advancing Development with Kotlin](https://speakerdeck.com/jakewharton/advancing-development-with-kotlin-droidcon-uk-2015) が流れてきた。
+
+<script async class="speakerdeck-embed" data-id="4103f5af52c8438ba49f85c533eadc2f" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+
+それを読んだ自分の感想
+
+<blockquote class="twitter-tweet" lang="ja"><p lang="en" dir="ltr">Actually, after I read this, I cannot help trying out Kotlin in Android development.</p>&mdash; Hiroshi Kurokawa (@hydrakecat) <a href="https://twitter.com/hydrakecat/status/660745631917436928">2015, 11月 1</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+Jake に毎度おどらされることに、内心忸怩たるものもあるのだけれど、Android エンジニアに対しては非常に説得力がある内容。正直 null チェックについては自分は高く評価していないのだけれど、ユーティリティー系クラスが extension function や高階関数で不要になるのは魅力的だ（それにしても、バイトコードまで表示するのが Jake らしい）。このバイトコードを見ると分かるけれど、Kotlin がそれほどトリッキーなことをしていないのが分かるだろう。依然として匿名クラスによるメモリリークなど注意は必要だが、ここまで Java に近いなら安心感もある。
+
+とりあえず、自分の趣味プロジェクトで使ってみよう、という結論になったのでした。

@@ -1,0 +1,108 @@
+---
+layout: post
+title:  "Fragmented Ep. 21: Diving Deep with Dagger"
+date:   2015-11-22 18:58:58.000000000 -0800
+categories: 
+---
+Fragmented Ep. 21: Diving Deep with Dagger
+
+恒例の Fragmented レビュー。今回は第21回の [Diving Deep with Dagger](http://fragmentedpodcast.com/episodes/021/) について。久しぶりに Donn と Kaushik の2人だけの回だが、カメオ出演（というのか？）で Square の Jesse Wilson が出ている。
+
+<!-- more -->
+
+# Dagger
+さて [Dagger](http://square.github.io/dagger/) と [Dagger 2](http://google.github.io/dagger/) である。どちらも Android では有名な Dependency Injection (DI) のライブラリだ。
+
+実を言うと、Dagger は自分にとっては「いつか使いたいと思いつつ、使えていない」ライブラリの1つだ。学習コストがそれなりにかかりそうで、ぱっと目につくメリットがそんなにないと二の足を踏んでしまう。良くない癖だ。だから、そんな自分にとっては、このエピソードは Dagger を勉強する良い機会だった。
+
+珍しく最初に雑談があって、Game of Thrones や Halloween の話をしている。Game of Thrones は未見なので意味が分からないが、どうやら [Winter Is Coming](https://en.wikipedia.org/wiki/Winter_Is_Coming) というのは第1エピソードのタイトルらしい。まぁ、Donn が住んでいるニュージャージーの秋はまさにそんな感じだという話。あと、Halloween で Donn がバナナスーツを着たという話で盛り上がっているのだが、いまいちバナナスーツがどういうものと見做されているか分からない。
+
+<blockquote class="twitter-tweet" lang="ja"><p lang="en" dir="ltr">Its one of those kind of days. <a href="https://twitter.com/hashtag/Halloween15?src=hash">#Halloween15</a> <a href="https://t.co/XRBOOzne8A">pic.twitter.com/XRBOOzne8A</a></p>&mdash; Donn Felker (@donnfelker) <a href="https://twitter.com/donnfelker/status/660493375129432064">2015, 10月 31</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+…まぁ、どこかで見たことはあるし、非常に馬鹿っぽいというのは分かる。しかし、低い声で Banana と連呼するのは、どういう背景に由来するのだろうか。ちなみに、バナナスーツは海の向こうで人気らしく「なぜ常にバナナスーツを着用しておくべきか」という表があったりする。バナナスーツ、万能だな。
+
+![](http://i.imgur.com/uISUh.jpg)
+
+# Why Dagger?
+バナナスーツではなく Dagger の話だった。雑談の後、DI が必要な背景について、Donn と Kaushik から説明がある。主に2つで、1つは依存関係が深くなってきたときにインスタンスをせっせと生成するのが大変だから、というもので、もう1つはテストのため、とのこと。自分としては面倒というだけの理由で DI を使うことには反対で、どこまで DI でカバーするかは慎重になる必要があると思う。後者については単純に魅力的だ。実際、Mockito でゴリゴリやっている身からすると、DI が欲しくてたまらなくなるときがある。
+
+ところで、この Dagger という名前、由来をご存知だろうか？Jake は Butter Knife とか Kotter Knife とか DI 系のライブラリに剣の名前を付けているが、それもこれも Dagger に倣って付けたものだ。では Dagger は？というと、Kaushik の長々とした説明があって DAG (Directed Acyclic Graph) に由来しているという話が語られる。オブジェクトグラフを解決するアルゴリズムがトポロジカルソートで、解を持つには有向非循環グラフでなければならないから、らしい。なるほど。
+
+探すと、かなり古いが、Jake による Dagger の説明があって、そこでも Dagger の由来について触れられている。それにしても、これ、Jesse が5週間で作ったのか。Google のときの Guice の経験があるとはいえ、すごいな……。
+
+<script async class="speakerdeck-embed" data-id="0b0491d0c78f013168aa3a2cd771e4db" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+
+# Under The Hood
+ここから Dagger のメカニズムの話になるのだが、ここでカメオ出演の Jesse が登場。マップサービスを例に簡単に Dagger がどうやってオブジェクトグラフを構築するのか説明してくれる。
+
+おもしろいのが、Dagger が依存先を解決するときの説明である。たとえば `MapService` が `GPSService` と `NetworkService` に依存しているとすると、`MapService` インスタンスを作るには、依存先のインスタンスを生成しなければならない。さらに `NetworkService` をインタンス化するときに `HttpClient` が必要だとすると、それもインスタンス化する必要がある。従って、普通に考えれば、順に依存をたどってはインスタンス化をすれば良いのだが、Dagger では以下のような手順を踏んでいるというのだ。
+
+1. まずキューを用意して最初に要求された `MapService` をキューに入れる
+2. キューからクラスを1つ取り出す（最初は `MapService` になる）
+3. これに依存があって依存先が解決済みでないなら、その未解決の依存先のクラスをキューに入れて、さらにそれ自身も解決できませんでしたというマークを付けてキューに入れる
+4. すでに解決済みなら OK。そのまま解決済みとして別に保存しておく。
+5. 2. に戻る
+
+実際のコードでは、[dagger.internal.Linker.java#linkRequested()](https://github.com/square/dagger/blob/master/core/src/main/java/dagger/internal/Linker.java#L129)のあたりがこの箇所に相当する。この133行目あたりにブレークポイントを置いて、[dagger.InjectionTest.java](https://github.com/square/dagger/blob/master/core/src/test/java/dagger/InjectionTest.java)を実行すればキューがどのように変化するか分かって面白い。
+
+あと、コードを読むと分かるが、ここではインスタンス化まではやっていない。`Bidning` という与えられたクラスをどのようにインスタンス化するか、という処理を確定していくだけなのだ。実際のインスタンス化は `dagger.ObjectGraph#inject(T)` や `dagger.ObjectGraph#get(Class<T>)` のタイミングで行われる。
+
+Jesse によると、このようなアルゴリズムにしているのは循環依存を避けるためと依存先を取得するプロセスを "tighter" に制御したいから、らしい。実際、たとえば `A → B → A` という依存があっても、上の `linkRequested()` は動く。もちろん、何も考えていないとインスタンス化の際に StackOverflowError が起きるが、Provider などをかませていれば大丈夫なのだろう。
+
+話は脱線するが、Dagger のコードを読んでいると、よく出来ていることに感心する。最初 `Binding` とか `key` とかよく分からない用語が出てくるのだが、それらの概念が理解できると、途端にすべての見通しが良くなる。最初はちょっと面倒なのだが、デバッグ実行しつつ各クラスやメソッドの JavaDoc を読んでいくとおおまかな挙動が分かるだろう。
+
+# Brief Explanation and Some Pitfalls
+Jesse が退場した後は、Kaushik と Donn による Dagger と Dagger 2 の概説になる。とはいえ、Dagger 2 についてはそんなに触れられていなくて、主に Dagger の一般的な話と使う際の注意点のような話だ。いくつか抜粋すると、以下のようになる。ざっとしたまとめなので、Dagger を全然知らない人は、[Dagger の公式ページ](http://square.github.io/dagger/)を先に読んでおくと良いかもしれない。
+
+## `ObjectGraph` の説明
+Dagger では `ObjectGraph` がすべての元になる。`ObjectGraph` が依存関係とそれをどう解決するか知っていて、`#inject(T)` もしくは `#get(Class<T>)` を呼べば依存を解決してくれる。Daggger 2 には、この `ObjectGraph` がなくて、代わりに `Component` がある。
+
+## `@Module` と `@Provides` の説明
+`@Module` は、依存関係の解決方法を提供するクラスを表すアノテーション。その内部の `@Provides` でアノテートされたメソッドで各クラスのインスタンス化の処理を指示している。これはコードを見た方が早いだろう。
+
+```java:DripCoffeeModule.java
+@Module(
+  injects = CoffeeApp.class
+)
+class DripCoffeeModule {
+  @Provides Heater provideHeater() {
+    return new ElectricHeater();
+  }
+
+  @Provides Pump providePump(Thermosiphon pump) {
+    return pump;
+  }
+}
+```
+
+注意点としては、基本的に `injects` 属性が必須なこと。つまり、エントリーポイントになるクラス（Andorid だったら `Activity` や `View` になるだろう）を指定してやる必要がある。これは一見不要に見えるので、FAQ として「なぜ `injects` は必要なのか？」と聞かれるらしいのだが、回答は「コンパイル時の検証のため」とのこと（参照: [java - Use Dagger modules without the "injects" directive - Stack Overflow](http://stackoverflow.com/questions/20477417/use-dagger-modules-without-the-injects-directive)）。ついでに `library` 属性についても触れていて、これが `true` の場合は他の `Module` に含まれるのが前提になるので `injects` の指定は不要とのこと。
+
+なお、Dagger 2 では `injects` は存在しない。代わりに `Component` があるので、そこがエントリーポイントを提供するようだ。
+
+## `overrides` の説明
+これも `@Module` の属性だが、この属性が `true` だと、他の `Module` の `@Provides` を上書きすることができる。基本的に、あるクラスをインスタンス化する方法は一意でなければならないのだが、この属性を指定したときに限り、その `Module` 内の `@Provides` メソッドが既存のものを置き換えることができる。ただし、上書き対象は同じ `ObjectGraph` 内である必要があるし、`overrides = true` のモジュールが複数あって衝突した場合もダメ。
+
+この属性は、公式ページにもある通り、テストのときに有用で、この機能がない故に Dagger 2 移行を拒んでいる人もいるらしい。Donn は Dagger 2 にない理由として `reflection` を避けるためじゃないかと推測していたが、`overrides` は対象のクラスに対するバインディングを上書きするオプションなので、あまり `reflection` は関係ないように思う。どちらかというと、`Component` が自動生成されるせいでカスタム `Module` を差し込むポイントがないのが問題に見える。 `Activity` や `Application` に `Component` をセットするメソッドを用意しても良いけれど、テストのためにプロダクションコードに手を入れるのもイマイチで、Dagger 2 でテストやりにくいのはなるほどと思う。
+
+ちなみに、Square では Dagger 2 は使っていないらしい（参照: [Dagger 2 support · Issue #158 · JakeWharton/u2020](https://github.com/JakeWharton/u2020/issues/158#issuecomment-150294762)）。まぁ、どこかでコンパイル時のコード生成も利用していないと言っていたから Dagger から移行するメリットはないのだろう。
+
+## `complete` 属性
+これも `@Module` の属性。デフォルトが `true` で、その場合、この `Module` 内で必要になるクラスが、この `Module` 内で解決できる必要がある。これは、静的解析のためで他の `Module` に依存している場合は `false` にしろとのこと。Dagger 2 では、これがデフォルトで `false` になっている。
+
+## Assisted Injection
+このネタは、Jesse が GoogleGroup で議論している（[Assisted Injection for Dagger - Google Groups](https://groups.google.com/forum/#!topic/dagger-discuss/QgnvmZ-dH9c/discussion)）についてで、Dagger にも Dagger 2 にもない機能の話。DI は基本的にコンパイル時に依存関係が確定するものだけれど、ランタイム時に決定したい場合もある。たとえば URL を与えて `ImageDownloader` というインスタンスを作る場合、URL が分かるまではインスタンス化できないので、`ImageDownloader` を DI で解決はできない。そこで URL を与えたら `ImageDownloader` が返ってくるような `Factory` を DI で生成してやって（ああ、ややこしい）、ランタイム時に URL を与えているけれど、ちょっと冗長。こういう用途を Dagger でサポートできないか、という話。スレッドを斜め読みしたが、最終的に[auto/factory · google/auto](https://github.com/google/auto/tree/master/factory)を使おうぜ、という話で落ち着いたようだ。
+
+インスタンス生成時に必要なパラメータには静的に解決できるものと動的に解決できるものの2種類があって両方をサポートしたい、ということなのだろうけれど、やはり DI でやる話ではないと思う。冗長とはいえ `Factory` は生成できるのだから、そこを簡略化するために、何か複雑な仕組みを作るのはやり過ぎというものだろう。嫌なら Guice もあるしね。
+
+それはそうと、この AutoFactory はなかなか使い勝手が良さそう。役割が明確だし、JSR-330 準拠のアノテーションが付いたコードを生成できるんだから、「こういうので良いんだよ、こういうので。」という気分にさせてくれる。Dagger も JSR-330 準拠にしておいたおかげで報われるし、良い話なんじゃないだろうか。
+
+## Espresso
+最後にちらりと Kaushik が触れていたのが、このネタ。Espresso で使うときは `ActivityTestRule` コンストラクタの3つ目の引数を `false` にしておいて自分で `Activity` を起動しないとモックを差し込めないという話。Dagger を使ったテストコードは、[chiuki/android-test-demo](https://github.com/chiuki/android-test-demo)が参考になるだろう。
+
+# まとめ
+最初にも書いけれど、自分は Dagger を「いつか使おうと思いつつ、使えていない」ライブラリと思っていたので、今回のエピソードは聞けて良かった。だいたいが公式ページに書いてあるような内容なので、すごく得るものがあったかというとそんなことはないけれど、勉強するきっかけになったのだから、十分。そもそも、こういう外的刺激を期待して聴いているのだから。
+
+Dagger についてはおおよそ挙動が把握できたので、いま関わっているプロジェクトで機会があったら導入を提案してみようと思っている。
+
+Dagger 2 はそれほど踏み込めなかったのだけれど、やはりテストで苦しんでいる人がいるのを見ると、躊躇してしまう。スコープがあるのは良いのだけれど、全部コンパイル時のコード生成で行うという方針が吉と出るのか凶と出るのか。しばらく遠巻きに見ることになりそうだ。
