@@ -10,9 +10,9 @@ categories:
 # FMA (Fused Multiply-Add)とは
 FMAは以下のような演算のことを呼ぶ。
 
-[tex:{
+$$
 fma(x, y, z) = xy + z
-}]
+$$
 
 この演算自体は行列の乗算やベクトルの内積の計算でよく現れるものであるが、通常の浮動小数点数の乗算と加算を別々に行うと誤差が出るので一度の演算で正確な値を算出したいときに用いる。たとえばC言語（C99）では `fma`、`fmaf`、`fmal`という3つの関数が導入されているらしい。
 
@@ -72,7 +72,7 @@ public class Test {
 
 > Since the double format moreover has more than (2p + 2) precision bits compared to the p bits of the float format, the two roundings of (a * b + c), first to the double format and then secondarily to the float format, are equivalent to rounding the intermediate result directly to the float format.
 
-コメントにはこのように書いてあるが、この `(2p + 2)` だから大丈夫という前提が間違っているように思える。OpenJDKには問題を報告しておいた（https://bugs.openjdk.java.net/browse/JDK-8253409）が、priorityも低いのですぐには直らないかもしれない。
+コメントにはこのように書いてあるが、この `(2p + 2)` だから大丈夫という前提が間違っているように思える。OpenJDKには問題を報告しておいた（[https://bugs.openjdk.java.net/browse/JDK-8253409](https://bugs.openjdk.java.net/browse/JDK-8253409)）が、priorityも低いのですぐには直らないかもしれない（2021-03-22 追記：修正されたらしい。バックポートもされたらしいので最新版では直っているはず。ちなみに修正方法はBigDecimalを使うというもので面白みはないけれど、そうだろうなという感じでした）。
 
 ## 奇数丸めをつかった実装
 さて、二段階丸め誤差を出さないFMAのソフトウェア実装はどうすればよいだろうか。前出の『浮動小数点数小話』によれば ["Emulation of a FMA and Correctly Rounded Sums: Proved Algorithms Using Rounding to Odd"](https://ieeexplore.ieee.org/document/4358278) という論文に奇数丸めを利用した方法が紹介されているらしい。
@@ -83,7 +83,7 @@ public class Test {
 
 <figure class="figure-image figure-image-fotolife" title="奇数丸め"><img src="/assets/images/oddrounding.png"/><figcaption>奇数丸め</figcaption></figure>
 
-さて、奇数丸めをどう実装するかだが、論文によればDekkerのエラーなし加算器（error-free adder）を使うことでソフトウェア的に奇数丸めを実装できる[^1]。これはつぎのようなアルゴリズムで [tex:{a + b}] の結果floatに丸めたものを [tex:{s}] に格納しつつ、本当の値との誤差を [tex:{r}] で計算できる。そうするとオーバーフローやアンダーフローが発生しなければ [tex:{a + b}] と [tex:{s + r}] が厳密に一致することになる。
+さて、奇数丸めをどう実装するかだが、論文によればDekkerのエラーなし加算器（error-free adder）を使うことでソフトウェア的に奇数丸めを実装できる[^1]。これはつぎのようなアルゴリズムで $$ {a + b} $$ の結果floatに丸めたものを $$ {s} $$ に格納しつつ、本当の値との誤差を $$ {r} $$ で計算できる。そうするとオーバーフローやアンダーフローが発生しなければ $$ {a + b} $$ と $$ {s + r} $$ が厳密に一致することになる。
 
 ```java
 float s = a + b;
@@ -122,7 +122,7 @@ float r = b - z;
 
 ここで `th` と `tl` は `c` と `uh` のエラーなし加算の結果である。上記の実装で先ほどの例を実行すると正しく`0x1.000002p52`が出力されるので、たぶん合っているだろう。なお実際に実装する場合はオーバーフローやアンダーフローも気にする必要があるので、double版のFMAのようにBigDecimalでやってしまう方がらくかもしれない。
 
-ところで、この実装のテストケースを作るのはすごく大変そうだ。floatだとちょうど結果が0.5ULPだけ離れたあたりになるようにサンプルをつくるのが面倒なのだ。doubleなら [tex:{a = 1-2^{-27}, b = 1+2^{=27}, c = 2^{-150}}]とでもすれば簡単につくれるのだけれど、floatは仮数部の桁数が奇数なのですこしめんどうくさい。
+ところで、この実装のテストケースを作るのはすごく大変そうだ。floatだとちょうど結果が0.5ULPだけ離れたあたりになるようにサンプルをつくるのが面倒なのだ。doubleなら $$ {a = 1-2^{-27}, b = 1+2^{=27}, c = 2^{-150}} $$とでもすれば簡単につくれるのだけれど、floatは仮数部の桁数が奇数なのですこしめんどうくさい。
 
 [^1]: [https://link.springer.com/article/10.1007/BF01397083](https://link.springer.com/article/10.1007/BF01397083)
 
