@@ -16,17 +16,24 @@
 title: Hiroshi Kurokawa's site
 email: 
 description: >- # this means to ignore newlines until "baseurl:"
-  Hiroshi Kurokawa (@hydrakecat).
+
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://hydrakecat.net" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: hydrakecat
-github_username:  hkurokawa
 
 # Build settings
 markdown: kramdown
 theme: minima
 plugins:
   - jekyll-feed
+
+# social network accounts
+twitter_username: hydrakecat
+github_username:  hkurokawa
+linkedin_username: hkurokawa
+
+mastodon:
+ - username: hydrakecat
+   instance: mastodon.cloud
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
