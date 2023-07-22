@@ -8,6 +8,8 @@ categories:
 
 RxJavaは非同期処理を扱うライブラリですが、それ故にRxJavaのからむ単体テストは一筋縄でいかないところがあります。この記事と次の記事では、RxJavaでの非同期処理テスト特有の問題と、その解決方法を説明します。なお、基本的に RxJava 1.x を対象としていますが、必要に応じて RxJava 2.x についても触れます。
 
+![RxJava logo image](/assets/images/rxjava_test.png)
+
 <!-- more -->
 
 # 非同期処理の単体テストの難しさ

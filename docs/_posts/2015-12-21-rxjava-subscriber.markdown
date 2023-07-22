@@ -22,6 +22,8 @@ RxJava は非常に強力でよく考えられたものですが、ソースを�
 
 # すべては Subscriber である
 
+![An image of a doc with a cpation saying evenryhing is subscriber](/assets/images/everything_subscriber.jpg)
+
 RxJava には多くのクラスが登場します。たとえば、ざっと挙げただけで、これくらいでしょうか。
 
 - Observable

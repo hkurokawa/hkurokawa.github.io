@@ -28,7 +28,9 @@ list.maxBy (fun(a: String): Int { return a.length })
 
 さて、標題の function literal と function expression の違いです。上記のどれが function literal で、どれが function expression でしょうか？そうです、ブレース（`{}`）に囲まれた関数（最初の3つ）はすべて function literal で、残りの `fun` キーワードが使われている例は function expression です。簡単ですね。
 
-では、この両者の違いは何でしょうか？実は、両者の違いは return 文の解釈のみに現れるようです((少なくとも Kotlin のコンパイラを grep した限りは https://github.com/JetBrains/kotlin/blob/4b8017e34b0842d717df82bbeb1a7f465e8a46fc/compiler/backend/src/org/jetbrains/kotlin/codegen/ExpressionCodegen.java#L1843-L1843 くらいしか大きな影響はないようでした。他にも違いがあることをご存知の方はご指摘いただけたら幸いです。))。
+では、この両者の違いは何でしょうか？実は、両者の違いは return 文の解釈のみに現れるようです[^1]。
+
+[^1]: 少なくとも Kotlin のコンパイラを grep した限りは [https://github.com/JetBrains/kotlin/blob/4b8017e34b0842d717df82bbeb1a7f465e8a46fc/compiler/backend/src/org/jetbrains/kotlin/codegen/ExpressionCodegen.java#L1843-L1843](https://github.com/JetBrains/kotlin/blob/4b8017e34b0842d717df82bbeb1a7f465e8a46fc/compiler/backend/src/org/jetbrains/kotlin/codegen/ExpressionCodegen.java#L1843-L1843) くらいしか大きな影響はないようでした。他にも違いがあることをご存知の方はご指摘いただけたら幸いです。
 
 例えば、以下のように function literal の中では素の return 文は禁止されており、コンパイルエラーになります。これは、「素の return 文は直近の名前付き関数（named function）か function expression を脱出する」と定められており、lambda からの脱出には使えないからです。`return@ordinaryFunction` のようなラベルを付ければ、return 文の使用は可能です。
 

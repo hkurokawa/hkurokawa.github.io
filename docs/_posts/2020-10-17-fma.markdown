@@ -48,7 +48,7 @@ public class Test {
 
 この差がどこに由来するか考えると、じつは `+ (double) c` の加算においてdouble型に丸めたときと、そこからさらに `(float)` でfloat型に丸めたときとで二段階に丸めていることが問題であることがわかる。つまり `0x1.000002fffffffcp52` -(double丸め)→ `0x1.0000030000000p52` -(float丸め)→ `0x1.000004p52` となっている。これを図示するとつぎのようになる。
 
-<figure class="figure-image figure-image-fotolife" title="二段階丸め誤差">[f:id:hydrakecat:20201017232845p:plain]<figcaption>二段階丸め誤差</figcaption></figure>
+<figure class="figure-image figure-image-fotolife" title="二段階丸め誤差"><img src="/assets/images/doubleroundingerror.png"/><figcaption>二段階丸め誤差</figcaption></figure>
 
 図の数直線上の短い直線はdoubleで表せる実数を、長い直線はfloatで表せる実数を示している。無限精度での答え `0x1.000002fffffffcp52` はfloatの観点からは `0x1.000002p52` により近いが、doubleに丸めるときに `0x1.0000030000000p52` になり、さらにfloatに丸めるときは最近接偶数丸めにより `0x1.000004p52` になってしまう。なお、floatの仮数部は23桁なので `0x1.000002p52` の仮数部の最下位1ビットは `1` となることに注意。
 
@@ -81,7 +81,7 @@ public class Test {
 
 これがうまくいくのは不思議だが、直観的には最近接偶数丸めで偶数側に寄りがちなのを奇数丸めでバランスを取るということだろう。あるいは、こうも考えることができる。奇数丸めをするということは、doubleの`0x1.000002fffffffp52`が表す範囲は `[0x1.000002fffffffp52, 0x1.0000030000000p52)` である。これによって本来の値が `0x1.0000030000000p52` より左ならfloatの `0x1.000002p52` に、右ならfloatの `0x1.000004p52` に丸められるので、最後に最近接偶数丸めをするときに `0x1.0000030000000p52` を飛び越すことがない。
 
-<figure class="figure-image figure-image-fotolife" title="奇数丸め">[f:id:hydrakecat:20201017232921p:plain]<figcaption>奇数丸め</figcaption></figure>
+<figure class="figure-image figure-image-fotolife" title="奇数丸め"><img src="/assets/images/oddrounding.png"/><figcaption>奇数丸め</figcaption></figure>
 
 さて、奇数丸めをどう実装するかだが、論文によればDekkerのエラーなし加算器（error-free adder）を使うことでソフトウェア的に奇数丸めを実装できる[^1]。これはつぎのようなアルゴリズムで [tex:{a + b}] の結果floatに丸めたものを [tex:{s}] に格納しつつ、本当の値との誤差を [tex:{r}] で計算できる。そうするとオーバーフローやアンダーフローが発生しなければ [tex:{a + b}] と [tex:{s + r}] が厳密に一致することになる。
 
@@ -124,7 +124,7 @@ float r = b - z;
 
 ところで、この実装のテストケースを作るのはすごく大変そうだ。floatだとちょうど結果が0.5ULPだけ離れたあたりになるようにサンプルをつくるのが面倒なのだ。doubleなら [tex:{a = 1-2^{-27}, b = 1+2^{=27}, c = 2^{-150}}]とでもすれば簡単につくれるのだけれど、floatは仮数部の桁数が奇数なのですこしめんどうくさい。
 
-[^1]: https://link.springer.com/article/10.1007/BF01397083
+[^1]: [https://link.springer.com/article/10.1007/BF01397083](https://link.springer.com/article/10.1007/BF01397083)
 
 # 感想
 浮動小数点はやはりおもしろい。やはり人間の直感とかなりずれるあたりがおもしろさだろう。floatの四則演算はdoubleを中間表現に使えば誤差なく計算できる、というのは定説であるし、実際に証明もされているが、FMAのような複数の四則演算の組み合わせになると成り立たない、というのは一見不思議にみえる。誤差のない演算を何回繰り返しても誤差が積もらない気がするからだ。しかし、よく考えるとfloat同士の演算をした結果はfloatで表せるとは限らず、さらにその数とfloatとの演算は、すでにfloat同士の四則演算の範囲を出ていると考えれば、「float同士の四則演算は」という部分が成り立たないので、これは矛盾しないわけだ。一方で、doubleは最終的な結果を出すのに十分な表現力を有しているので、途中の演算では奇数丸めを採用するというただそれだけで結果が保証されるというのもおもしろい。Dekker-Knuthのエラーなし加算器も不勉強にして知らなかったが、これもだいぶ興味深い。機会を見つけてもうすこし調べてみたいと思っている。

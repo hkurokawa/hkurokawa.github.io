@@ -4,11 +4,11 @@ title:  "RxJava のテスト(2): RxJavaHooks, RxAndroidPlugins"
 date:   2016-12-13 06:45:32.000000000 -0800
 categories: 
 ---
-これは[RxJava Advent Calendar 2016](http://qiita.com/advent-calendar/2016/rxjava)の第14日目の記事です。[前回](http://hydrakecat.hatenablog.jp/entry/2016/12/12/RxJava_%E3%81%AE%E3%83%86%E3%82%B9%E3%83%88%281%29%3A_TestSubscriber%2C_test%28%29%2C_TestScheduler)はTestSubscriberやTestSchedulerを使ってRxJavaに関わる単体テストのしかたを説明しました。
+これは[RxJava Advent Calendar 2016](http://qiita.com/advent-calendar/2016/rxjava)の第14日目の記事です。[前回](/2016/12/11/rxjava-test-01.html)はTestSubscriberやTestSchedulerを使ってRxJavaに関わる単体テストのしかたを説明しました。
 
 この記事では、それらでは足りない場合の奥の手、スケジューラを差し替える方法について説明します。
 
-[f:id:hydrakecat:20161211234713p:plain]
+![RxJava logo image](/assets/images/rxjava_test.png)
 
 <!--more-->
 
@@ -123,6 +123,6 @@ RxJavaHooksと同じようなプラグイン[RxAndroidPlugins](https://static.ja
 なお、すでにフックがセットされている状態で、この `registerSchedulerHook()` メソッドを呼ぶとエラーになります。必ずセットする前に `reset()` を呼ぶか、この `registerSchedulerHook()` メソッドが1度しか呼ばれないようにしましょう。
 
 # まとめ
-[前回](http://hydrakecat.hatenablog.jp/entry/2016/12/12/RxJava_%E3%81%AE%E3%83%86%E3%82%B9%E3%83%88%281%29%3A_TestSubscriber%2C_test%28%29%2C_TestScheduler)と今回で、RxJavaを使ったコードをどうテストするか見てきました。
+[前回](/2016/12/11/rxjava-test-01.html)と今回で、RxJavaを使ったコードをどうテストするか見てきました。
 
 実は、この一連の記事を書いたきっかけは、[DevFest Tokyo](https://gdg-tokyo.connpass.com/event/38927/)で自分が「初心者のためのRxJava」というセッションを行った際に受けた「RxJavaのテストはどうしたら良いですか？」という質問でした。そのときはここに書いてあるようなことを口頭で答えたのですが、どこかにまとめておけば、そのリンクを示すだけで済んだのに、と思い、ここに書いた次第です。同じような悩みを抱えている人の助けになれば幸いです。

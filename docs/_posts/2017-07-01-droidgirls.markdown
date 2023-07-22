@@ -12,9 +12,9 @@ DroidGirlsで「RxJava2」を題材に解説とハンズオンをしてきまし
 題材の解説は30分、ハンズオンは1時間半弱ということで、今回はRx初心者が一通りRxJavaを使えるようになることを目的としました。
 RxJava2を使っていますが、解説自体ではRxJava2の詳細には踏み込まずにRxの基本的な概念とよく使うオペレータを解説しています。
 
-<script async class="speakerdeck-embed" data-id="2c870d45b24047bab58a61afdf52a65a" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+<iframe class="speakerdeck-iframe" frameborder="0" src="https://speakerdeck.com/player/2c870d45b24047bab58a61afdf52a65a" title="RxJava 入門" allowfullscreen="true" style="border: 0px; background: padding-box padding-box rgba(0, 0, 0, 0.1); margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 420;" data-ratio="1.3333333333333333"></iframe>
 
-課題は https://github.com/DroidGirls/Meetup/tree/master/6_rxjava にあるので、腕に覚えのある方もない方も良かったら挑戦してみてください。
+課題は [https://github.com/DroidGirls/Meetup/tree/master/6_rxjava](https://github.com/DroidGirls/Meetup/tree/master/6_rxjava) にあるので、腕に覚えのある方もない方も良かったら挑戦してみてください。
 もっと良いやり方があるよ、ここが間違っているよ、という指摘があれば、ぜひ教えてください。
 
 # 感想
@@ -29,7 +29,7 @@ RxJava2を使っていますが、解説自体ではRxJava2の詳細には踏み
 
 また、質問も最初はなかなか出ず、もうちょっと質問しやすい雰囲気を作れば良かったかなと反省しています。歩き回ったり、詰まっていそうな人に声をかけるなどをすれば良かったです。
 
-自分は、みんなの進捗を把握する余裕もあまり持てなかったのですが、ハンズオンの途中で@joooi13さんが進捗を見つつ課題の解答を紹介する形式を取っていただいたのが、とても助かりました。
+自分は、みんなの進捗を把握する余裕もあまり持てなかったのですが、ハンズオンの途中で[@joooi13](https://twitter.com/joooi13)さんが進捗を見つつ課題の解答を紹介する形式を取っていただいたのが、とても助かりました。
 ハンズオンとはいえ、ずっと詰まったまま時間を過ごすのは勿体ないので、適宜解説を挟んで、前に進めた方が良いように思いました。
 
 ## Rxのむずかしさ

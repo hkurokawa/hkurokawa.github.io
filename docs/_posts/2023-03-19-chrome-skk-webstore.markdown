@@ -5,7 +5,7 @@ date:   2023-03-19 00:00:00.000000000 -0700
 categories: chrome-skk
 ---
 
-[先日の記事](https://hydrakecat.hatenablog.jp/entry/2022/08/07/ChromeOS%E7%94%A8SKK%E3%82%92%E5%85%AC%E9%96%8B%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F)でManifest V3の対応に時間がかかるのでWeb Storeの公開は先になりそうですと書いたのですが、多少進展があってギリギリ使い物になるかなくらいになったので公開しました。
+[先日の記事](/chrome-skk/2022/08/06/chrome-skk.html)でManifest V3の対応に時間がかかるのでWeb Storeの公開は先になりそうですと書いたのですが、多少進展があってギリギリ使い物になるかなくらいになったので公開しました。
 
 [https://chrome.google.com/webstore/detail/skk-japanese-input/gdfnmlnbnmgdliccidmiphhpicaecffj](https://chrome.google.com/webstore/detail/skk-japanese-input/gdfnmlnbnmgdliccidmiphhpicaecffj)
 

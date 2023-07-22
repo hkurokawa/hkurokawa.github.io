@@ -32,11 +32,14 @@ Droicon の歴史や、今回の Droidcon Montreal にまつわる数字につ�
 ## Keynote: An Open Source Advantage by Jake Wharton and Jesse Wilson (Square)
 オープンソース活動の進め方やどのようにオープンソースライブラリを選ぶかについての発表。
 
-動画
+動画:
+
 <iframe width="560" height="315" src="https://www.youtube.com/embed/PCxz2LEmuL4" frameborder="0" allowfullscreen></iframe>
 
-スライド
+スライド:
+
 <script async class="speakerdeck-embed" data-id="018fdc6a90ef4a56b76d56c45b5c8e4d" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+
 
 ライブラリの機能について、全員の言う「必須機能」を実装していたら肥大化してしまうので全員が必要な機能だけ実装して、残りは実装しない、必要に応じて拡張可能にしておくことが望ましい。という意見が印象に残った。Square のライブラリはまさにそういう感じで、必要最小限の機能に絞っているところがクールだし、使いやすいところだと思う。とはいえ、拡張可能な API の設計というのが、これが本当に難しいと Jake も言っていたけれど。
 
@@ -73,9 +76,10 @@ API のシンプルさについては、たとえば、BufferedSource に数値�
 
 ## HTTP in a Hostile World by Jesse Wilson (Square)
 
-こちらは、同じく Square の Jesse による HTTP の世界の話。
+こちらは、同じく Square の Jesse による HTTP の世界の話。（2023-07-22：リンクが切れていたので同じ内容のDroidcon Trontoのものに差し替え）
 
-<script async class="speakerdeck-embed" data-id="a5f37da026f80132f6ff42a09a3cc4e8" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+<iframe class="speakerdeck-iframe" frameborder="0" src="https://speakerdeck.com/player/9a22b52269904f44a9737ff61a08caec" title="HTTP in a Hostile World (Droidcon Toronto 2019)" allowfullscreen="true" style="border: 0px; background: padding-box padding-box rgba(0, 0, 0, 0.1); margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 314;" data-ratio="1.78343949044586"></iframe>
+
 
 内容は多岐に渡るので、上記のスライドを見てほしいが、気になった点としては、以下のあたり。
 
@@ -134,7 +138,7 @@ Etsy の中の人による Drawable の話。スライドは上がっていな�
 
 Custom Drawable の作り方や Drawable と View の連携などの基本的な話に始まって、後半は Lollipop で導入された種々の API について。
 
-レンダリングのパフォーマンスについては https://source.android.com/devices/graphics/index.html や [Android Graphics Pipeline: From Button to Framebuffer (Part 1) | inovex Blog ](https://blog.inovex.de/android-graphics-pipeline-from-button-to-framebuffer-part-1/) を読もう、とのこと。
+レンダリングのパフォーマンスについては https://source.android.com/devices/graphics/index.html や [Android Graphics Pipeline: From Button to Framebuffer (Part 1) \| inovex Blog ](https://blog.inovex.de/android-graphics-pipeline-from-button-to-framebuffer-part-1/) を読もう、とのこと。
 
 ## Mastering Recyclerview Layouts by Dave Smith (New Circle, Inc.)
 
@@ -153,7 +157,7 @@ Lollipop から追加された Recyclerview と、それをカスタマイズす
   - fillGaps() の中では、すべての View を scrap してからレイアウトし直すのが良い
   - View に state はできるだけ持たせない方が良い
 - コードは https://github.com/devunwired/recyclerview-playground を参照
-- ブログ記事 [Building A RecyclerView LayoutManager – Redux | Wires Are Obsolete](http://wiresareobsolete.com/2015/02/recyclerview-layoutmanager-redux/) も読んでね
+- ブログ記事 [Building A RecyclerView LayoutManager – Redux \| Wires Are Obsolete](http://wiresareobsolete.com/2015/02/recyclerview-layoutmanager-redux/) も読んでね
 
 ## Introduction to Functional Reactive Programming on Android by Juan Gomez (Netflix)
 
@@ -161,7 +165,7 @@ Lollipop から追加された Recyclerview と、それをカスタマイズす
 
 聴いている Jake がとても退屈そうなのが印象深かった。
 
-<script async class="speakerdeck-embed" data-id="f20ac08ce1f349d39d6bd572e81d2a7a" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+<script async class="speakerdeck-embed" data-id="f20ac08ce1f349d39d6bd572e81d2a7a" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
 
 ## Retrofit: Obliterating HTTP Boilerplate by Jacob Tabak (Timehop)
 
@@ -194,9 +198,6 @@ Retrofit の非常によくまとまった解説。Retrofit を使ったこと�
 
 今回の Droidcon Montreal に行った目的の1つは、いつか Droidcon Tokyo を開催する上で参考にしよう、というもの。途中で運営の Marcos を捕まえて20分くらい運営の話を聞けたのが良かった。その話は、またいずれどこかで。
 
-下の写真は、Marcos を質問攻めにする筆者。
-
-[f:id:hydrakecat:20150524201723j:plain]
 
 ## おまけ（その2）
 
@@ -204,4 +205,4 @@ Retrofit の非常によくまとまった解説。Retrofit を使ったこと�
 
 それでも、テレビでよく見るバックストレッチが見れたし、行って良かった。次は是非開催中に行きたい。
 
-[f:id:hydrakecat:20150524201821j:plain]
+![](/assets/images/droidcon_montreal_gilles_villeneuve.png)

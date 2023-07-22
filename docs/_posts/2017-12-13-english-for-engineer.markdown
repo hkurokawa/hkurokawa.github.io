@@ -60,7 +60,7 @@ OSSのRAEDMEに始まり、RFCも英語（多くは日本語訳されていま�
 
 こちらがRFCの日本語訳の該当個所になります。
 
-> 生成元サーバは、［［ 自身が応答に対し Date ヘッダ値を生成する時刻 ］に可能な限り近い，表現の Last-Modified 値 ］を取得するべきである」ですが、これは「Dateヘッダ値を生成する時点における直近のLast-Modified値を使うべき
+> 生成元サーバは、［［ 自身が応答に対し Date ヘッダ値を生成する時刻 ］に可能な限り近い，表現の Last-Modified 値 ］を取得するべきである。
 
 [RFC 7232（日本語訳）](https://triple-underscore.github.io/RFC7232-ja.html#section-2.2.1)からの引用です。
 

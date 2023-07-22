@@ -1,0 +1,18 @@
+---
+layout: post
+title:  "DroidKaigi 2018 でAndroid開発の陥りがちな罠について話します"
+date:  	2018-02-07 06:47:04.000000000 -0700
+categories: 
+---
+
+明日から [DroidKaigi 2018](https://droidkaigi.jp/2018/) が始まりますが、僕は2日目 2/9（金）の 11:20 から Room 2 で「Surviving a Discontinuous World」というタイトルで話します。
+
+この話は初心者向けに、Androidアプリ開発でよく陥る罠を「不連続性」という観点から説明しようという試みです。
+
+自分の持論なのですが、Androidアプリ開発でもっともバグが起きやすいのは非同期処理とライフサイクルだと思っています。この両者を不連続性という観点からまとめて説明しつつそれに対するアプローチやヒントを紹介したいと思っています。
+
+オフィスアワーも予定しているので、質問のある方はぜひお気軽に声をかけてください。
+
+[https://droidkaigi.jp/2018/timetable?session=16933](https://droidkaigi.jp/2018/timetable?session=16933)
+
+![](/assets/images/droidkaigi2018_timetable.png)

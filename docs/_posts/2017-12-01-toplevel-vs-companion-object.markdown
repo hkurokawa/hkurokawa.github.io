@@ -9,7 +9,7 @@ JavaにはあるけれどKotlinにないものの1つに、クラスメソッド
 
 より詳細に言えば、メソッドや定数[^1]をtop-levelで宣言するのと[companion object](https://kotlinlang.org/docs/reference/object-declarations.html)に宣言するのとどちらが良いかという話です。
 
-[^1] なお、この記事ではpublicもしくはinternalなメソッドや定数について考えます。privateなものについてはどちらも大差ないという考えからです。
+[^1]: なお、この記事ではpublicもしくはinternalなメソッドや定数について考えます。privateなものについてはどちらも大差ないという考えからです。
 
 <!-- more -->
 
@@ -157,7 +157,7 @@ public final class shape/Circle$Companion {
 
 ではtop-level版はどうなるでしょうか。
 
-```
+```java
 public final class shape/Circle {
   ...
 }
@@ -207,7 +207,7 @@ public final class shape/CircleKt {
 
 まずcompanion object版はこうなります。
 
-```
+```kotlin
 import shape.Circle
 
 fun main(args: Array<String>) {
@@ -257,7 +257,7 @@ fun main(args: Array<String>) {
 ここからは推測にすぎませんが、どうもKotlinの作者は、companion objectはファクトリーメソッドのためにあると考える節があります。
 Scalaから借りてきた概念というのもあると思うのですが、class objectやdefault objectのように名付けに苦労しつつも通常のobjectではない特別なobjectを作ろうとしていたのは、ファクトリーメソッドが`クラス名.ファクトリーメソッド()`という形式で呼べるようにしたかったのではないかと思います[^2]
 
-[^2]完全に推測なので違うようだったらぜひご指摘ください
+[^2]: 完全に推測なので違うようだったらぜひご指摘ください
 
 巷間のブログではどうでしょうか？1つ参考になるブログ記事に[Where Should I Keep My Constants in Kotlin?](https://blog.egorand.me/where-do-i-put-my-constants-in-kotlin/)という記事があります。
 これは余計なオブジェクトを生成しないという観点からobjectに定数を定義する方法とtop-levelに定義する方法を比較し、後者の方がよいとしています。
@@ -267,7 +267,7 @@ Scalaから借りてきた概念というのもあると思うのですが、cla
 最後にやや飛び道具的ですが、標準ライブラリを見てみます。
 標準ライブラリに従わなければならないという法はありませんが、それらがcompanion objectをどう使っているか調べれば、きっとヒントが得られるでしょう。
 
-ここでは https://github.com/JetBrains/kotlin の現時点での最新のコード[^3]でつぎのコマンドを実行してみます。
+ここでは [https://github.com/JetBrains/kotlin](https://github.com/JetBrains/kotlin) の現時点での最新のコード[^3]でつぎのコマンドを実行してみます。
 
 ```
 $ find ./libraries/stdlib -name '*.kt' | xargs grep -l 'companion object'
@@ -330,7 +330,7 @@ https://github.com/JetBrains/kotlin/blob/a39f2f82718dd278eba9a82df4a5632abb1f404
 
 むしろ、`const val`でgrepしてみるとtop-levelに多くの定数が定義されています。あるいは、[Typography](https://github.com/JetBrains/kotlin/blob/0b37c9e83cd09008db5908fd47583cd62e9fc17b/libraries/stdlib/src/kotlin/text/Typography.kt)のように名前のあるobject内に定数を定義してグルーピングしているものはありました。
 
-[^3] https://github.com/JetBrains/kotlin/commit/a39f2f82718dd278eba9a82df4a5632abb1f4044
+[^3]: [https://github.com/JetBrains/kotlin/commit/a39f2f82718dd278eba9a82df4a5632abb1f4044](https://github.com/JetBrains/kotlin/commit/a39f2f82718dd278eba9a82df4a5632abb1f4044)
 
 # まとめ
 以上の調査結果をもとにpublic/internalなクラスメソッドや定数をどう定義するのがよいか考えてみましょう。

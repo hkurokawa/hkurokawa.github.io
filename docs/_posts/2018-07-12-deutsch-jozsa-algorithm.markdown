@@ -25,7 +25,7 @@ categories:
 
 最後にQ#を使ったコードも載せますが、Q#のことをそれほど知らなくても読めると思います。
 
-- [Quantum Computing Concepts | Microsoft Docs](https://docs.microsoft.com/en-us/quantum/quantum-concepts-1-intro?view=qsharp-preview)
+- [Quantum Computing Concepts \| Microsoft Docs](https://docs.microsoft.com/en-us/quantum/quantum-concepts-1-intro?view=qsharp-preview)
 - [Introduction to Quantum Oracles - Codeforces](https://codeforces.com/blog/entry/60319)
 
 # 解く問題
@@ -215,5 +215,5 @@ namespace Solution
 
 おそらく量子計算理論をきちんと勉強しないと理解できなさそうなので、もし分かったら追記します。
 
-[^1] "Rapid solution of problems by quantum computation", David Deutsch1, Richard Jozsa, Proc. R. Soc. Lond. A (1992) 439, 553-558
-[^2] http://tomoyukimorimae.web.fc2.com/nigate.pdf
+[^1]: "Rapid solution of problems by quantum computation", David Deutsch1, Richard Jozsa, Proc. R. Soc. Lond. A (1992) 439, 553-558
+[^2]: [http://tomoyukimorimae.web.fc2.com/nigate.pdf](http://tomoyukimorimae.web.fc2.com/nigate.pdf)

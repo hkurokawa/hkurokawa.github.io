@@ -5,7 +5,7 @@ date:   2022-08-20 00:00:00.000000000 -0700
 categories: 
 ---
 
-[前の記事](https://hydrakecat.hatenablog.jp/entry/2020/07/26/%E4%B8%AD%E5%B9%B4%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9E%E3%81%AE%E7%AB%B6%E3%83%97%E3%83%AD%E4%BA%8B%E5%A7%8B)で、スプラトゥーン2にハマっていると書いたのだけれど、2年たってようやくウデマエがオールXになったので、メモ。
+[前の記事](/2020/07/25/middle-age-competitive-programming.html)で、スプラトゥーン2にハマっていると書いたのだけれど、2年たってようやくウデマエがオールXになったので、メモ。
 
 ![](/assets/images/splatoon2_rankx_screenshot.png)
 
